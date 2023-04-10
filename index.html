@@ -1,0 +1,171 @@
+<!-- svg for Upload icon -->
+<html>
+  <head>
+     <!-- Tailwind CDN -->
+
+  </head>
+  <body>
+    <main>
+      <div class="flex flex-col lg:flex-row">
+        <div class="lg:w-1/3 p-4">
+          <section class="section-container min-h-1/2">
+            <div class="flex flex-col items-center">
+              <!-- Documents uploads form and instructions -->
+              <section class="mt-5 px-3 flex gap-6">
+                <div class="flex-1 flex flex-col items-center p-3 border-2 border-dotted border-gray-300 rounded-lg drag-area">
+                <i class="fa-sharp fa-solid fa-cloud-arrow-up text-6xl text-violet-400"></i>
+                  <header class="mt-6">
+                    <span class="drag-file">Drag files here to upload </span> or
+                    <button class="px-2 py-1 text-white bg-violet-400 rounded-full file-input-button">
+                      select a file
+                    </button>
+                    from your device
+                  </header>
+                  <input type="file" class="file-input" hidden />
+                </div>
+              </section>
+
+              <!-- Images groups - All the selected images will be shown here -->
+              <p class="text-red-700 text-sm hidden" id="filesize-error">
+                The file size should be less than 5mb
+              </p>
+              <p class="text-red-700 text-sm hidden" id="filetype-error">
+                The file should be a csv file only
+              </p>
+
+              <!-- No document selected -->
+              <p class="hidden text-xl text-red-600 text-center bg-pink-200 mt-6 p-3 rounded-lg" id="input-empty-error"></p>
+              <!-- Showing all the files inside this list -->
+              <ul id="document-images" class="mt-6 px-3 bg-slate-100"></ul>
+            </div>
+          </section>
+        </div>
+        <div class="lg:w-2/3 p-4">
+          <form id="run-query">
+            <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+                <div class="px-4 py-2 bg-white rounded-t-lg dark:bg-gray-800">
+                    <label for="query" class="sr-only">Your query</label>
+                    <textarea id="query" rows="4" class="w-full px-0 text-sm text-gray-900 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write a query..." required></textarea>
+                </div>
+                <div class="flex items-center justify-between px-3 py-2 border-t dark:border-gray-600">
+                    <button type="submit" class="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800">
+                        Run Query
+                    </button>
+                </div>
+            </div>
+         </form>
+        </div>
+      </div>
+
+      <div id="display_output" class="relative overflow-x-auto shadow-md sm:rounded-lg">
+
+      </div>
+      </main>
+      <script rel="preconnect" src="https://cdn.tailwindcss.com"></script>
+
+      <!-- font awesome -->
+      <script
+        src="https://kit.fontawesome.com/ffbd6d2f88.js"
+        crossorigin="anonymous"
+        defer
+      ></script>
+      <script src="drop_zone.js"></script>
+      <script src="node_modules/papaparse/papaparse.min.js"></script>
+      <script src='node_modules/sql.js/dist/sql-wasm.js'></script>
+      <script>
+        config = {
+          locateFile: filename => `node_modules/sql.js/dist/${filename}`
+        }
+        // The `initSqlJs` function is globally provided by all of the main dist files if loaded in the browser.
+        // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
+        let db;
+        initSqlJs(config).then(function(SQL){
+          //Create the database
+          db = new SQL.Database();
+          // Run a query without reading the results
+          db.run("CREATE TABLE test (col1, col2);");
+          // Insert two rows: (1,111) and (2,222)
+          db.run("INSERT INTO test VALUES (?,?), (?,?)", [1,111,2,222]);
+
+          // Prepare a statement
+          const stmt = db.prepare("SELECT * FROM test WHERE col1 BETWEEN $start AND $end");
+          stmt.getAsObject({$start:1, $end:1}); // {col1:1, col2:111}
+
+          // Bind new values
+          stmt.bind({$start:1, $end:4});
+          while(stmt.step()) { //
+            const row = stmt.getAsObject();
+            console.log('Here is a row: ' + JSON.stringify(row));
+          }
+        });
+
+        const importCSVtoSqlite3 = () => {
+          Papa.parse(documentFileObj["files"][0], {
+            complete: function(results) {
+              r = results.data;
+              console.log("CREATE TABLE "+documentFileObj["fileName"][0]+" ("+ r[0].join(", ")+");")
+              db.run("CREATE TABLE "+documentFileObj["fileName"][0]+" ("+ r[0].join(", ")+");")
+              heading_length = r[0].length;
+              insert_query_string = Array(heading_length).fill('?').join(', ')
+              console.log("INSERT INTO "+documentFileObj["fileName"][0]+ " VALUES ("+insert_query_string+")")
+              console.log(r.slice(1));
+              r.slice(1).forEach(function(elm){
+                if(heading_length == elm.length) {
+                  console.log("inserted")
+                  console.log(elm)
+                  db.run("INSERT INTO "+documentFileObj["fileName"][0]+ " VALUES ("+insert_query_string+")", elm)
+                }
+              })
+              x = db.exec("SELECT * FROM "+documentFileObj["fileName"][0])
+              console.log(results);
+              console.log(x);
+              renderHTML(x);
+            }
+          });
+        };
+        let renderTableHeading = (columns) => {
+          table_heading_string = `<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"><tr>`
+          columns.forEach(function(el) {
+            table_heading_string += `<th scope="col" class="px-6 py-3">${el}</th>`
+          })
+          table_heading_string += "</tr></thead>"
+          return table_heading_string
+        }
+
+        let renderTableBody = (rows) => {
+          table_heading_string = "<tbody>"
+          rows.forEach(function(el) {
+            table_heading_string += `<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">`
+            el.forEach(function(column) {
+              table_heading_string += `<td class="px-6 py-4">${column}</td>`
+            })
+            table_heading_string += "</tr>"
+          })
+          table_heading_string += "</tbody>"
+          return table_heading_string
+        }
+
+        let renderHTML = (sqlite3_result) => {
+          table_string = `<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">`
+          table_string += renderTableHeading(sqlite3_result[0].columns)
+          table_string += renderTableBody(sqlite3_result[0].values)
+          table_string += "</table>"
+          let display_output = document.getElementById('display_output');
+          display_output.innerHTML = table_string;
+          document.getElementById('sql-area').remove("hidden");
+          console.log(table_string);
+        }
+
+        document.querySelector("body").addEventListener("submit", (e) => {
+          e.stopPropagation();
+          e.preventDefault();
+          console.log("it worked");
+          console.log(document.querySelector("#query").value)
+          x = db.exec(document.querySelector("#query").value)
+          console.log(x);
+          renderHTML(x);
+        });
+      </script>
+  </body>
+</html>
+
