@@ -2,5 +2,8 @@
   "dependencies": {
     "papaparse": "^5.4.1",
     "sql.js": "^1.8.0"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
   }
 }
