@@ -56,25 +56,9 @@ button.onclick = () => {
 
 input.addEventListener("change", function (e) {
   const target = e.target;
-  setttingFileValue(target);
+  settingFileValue(target);
 });
 
-// Finding the document closest to the delete button and removing it from the list
-// documentImages.addEventListener("click", (e) => {
-//   const target = e.target;
-//   const deleteFileButton = target.closest(".delete-document");
-//   const documentsWrapper = target.closest("#document-images");
-//   const documentToDelete = target.closest(".document-file");
-//   const documentName = documentToDelete.firstElementChild.children[1].innerText;
-
-//   if (deleteFileButton === null) return;
-
-//   /* This is finding the index of the file name in the documentFileObj object. */
-//   const index = documentFileObj["fileName"].find((x) => x === documentName);
-//   /* This is removing the file name from the documentFileObj object. */
-//   documentFileObj["fileName"].splice(index, 1);
-//   documentsWrapper.removeChild(documentToDelete);
-// });
 
 /**
  * If the file type is jpg, jpeg, or png, return the text-violet-600 fa-image class. Otherwise, return
@@ -113,13 +97,13 @@ dropArea.addEventListener("dragleave", () => {
 //If user drop File on DropArea
 /* This is an event listener. It is listening for the drop event. When the drop event is triggered, it
 will prevent the default behavior, remove the active class from the dropArea element, change the
-text of the dragFile element, and call the setttingFileValue function. */
+text of the dragFile element, and call the settingFileValue function. */
 dropArea.addEventListener("drop", (e) => {
   e.preventDefault();
   const target = e.dataTransfer;
   dropArea.classList.remove("active");
   dragFile.textContent = "Drag files here to upload";
-  setttingFileValue(target);
+  settingFileValue(target);
 });
 
 // Navigation part
@@ -130,8 +114,6 @@ nextButtonNavigation function. If it does not, it will show an alert. If the tar
 prevButton, it will call the prevButtonNavigation function. */
 document.querySelector("body").addEventListener("click", (e) => {
   const target = e.target;
-  const prevButton = target.closest(".document-prev-button");
-  const nextButton = target.closest(".document-next-button");
   const importButton = target.closest(".document-import-button");
   const sectionContainer = target.closest(".section-container");
 
@@ -142,14 +124,10 @@ document.querySelector("body").addEventListener("click", (e) => {
       validationInputs(sectionContainer, documentFileObj);
     }
   }
-
-  if (prevButton) {
-    prevButtonNavigation(sectionContainer);
-  }
 });
 
 
-const setttingFileValue = (target) => {
+const settingFileValue = (target) => {
   /*getting user select file and [0] this means if user select multiple files then we'll select only the first one
      This is getting the file name, file size, and file type. */
   console.log(target)
@@ -158,28 +136,19 @@ const setttingFileValue = (target) => {
   const fileSize = target.files[0].size;
   const fileType = target.files[0].type.split("/").pop(); //fetching only the part after slash
 
-  let filesizeErrorMessage = document.getElementById("filesize-error");
   let filetypeErrorMessage = document.getElementById("filetype-error");
+  filetypeErrorMessage.classList.add("hidden");
 
-  /* This is checking the file size. If the file size is greater than 5mb, it will show an error
-    message. */
-  let sizeInMB = Number.parseFloat(fileSize / (1024 * 1024)).toFixed(2);
-  if (sizeInMB > 5) {
-    filesizeErrorMessage.classList.remove("hidden");
+  const fileTypes = ["text/csv","application/csv"]
+  if (
+    fileTypes.includes(target.files[0].type)
+  ) {
     filetypeErrorMessage.classList.add("hidden");
-  } else {
-    filesizeErrorMessage.classList.add("hidden");
-    const fileTypes = ["text/csv","application/csv"]
-    if (
-      fileTypes.includes(target.files[0].type)
-    ) {
-      filetypeErrorMessage.classList.add("hidden");
 
-      documentFileObj["fileName"][0] = fileName;
-      documentFileObj["files"][0] = target.files[0];
-      importCSVtoSqlite3();
-    } else {
-      filetypeErrorMessage.classList.remove("hidden");
-    }
+    documentFileObj["fileName"][0] = fileName;
+    documentFileObj["files"][0] = target.files[0];
+    importCSVtoSqlite3();
+  } else {
+    filetypeErrorMessage.classList.remove("hidden");
   }
 };
