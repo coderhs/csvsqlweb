@@ -58,6 +58,8 @@
         </div>
       </div>
 
+      <div id="loadingBar" class="hidden"></div>
+
       <div id="display_output" class="relative overflow-x-auto shadow-md sm:rounded-lg">
 
       </div>
@@ -80,6 +82,8 @@
         // The `initSqlJs` function is globally provided by all of the main dist files if loaded in the browser.
         // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
         let db;
+        let mainTableName;
+
         initSqlJs(config).then(function(SQL){
           db = new SQL.Database();
         });
@@ -88,29 +92,37 @@
           Papa.parse(documentFileObj["files"][0], {
             complete: function(results) {
               r = results.data;
-              console.log("CREATE TABLE "+documentFileObj["fileName"][0]+" ("+ r[0].join(", ")+");")
-              db.run("CREATE TABLE "+documentFileObj["fileName"][0]+" ("+ r[0].join(", ")+");")
-              heading_length = r[0].length;
-              insert_query_string = Array(heading_length).fill('?').join(', ')
-              console.log("INSERT INTO "+documentFileObj["fileName"][0]+ " VALUES ("+insert_query_string+")")
+              new_column_names = convertAndStoreCSVHeaders(r[0]);
+              mainTableName = removeSpecialCharsFromHeaderTitle(documentFileObj["fileName"][0]);
+              new_table_name   = "csv_" + mainTableName;
+              console.log("CREATE TABLE "+new_table_name+" ("+ new_column_names.join(", ")+");")
+              db.run("CREATE TABLE "+new_table_name+" ("+ new_column_names.join(", ")+");")
+              heading_length = new_column_names.length;
+
+              generated_insert_query_string = insert_query_string(heading_length)
+              console.log("INSERT INTO "+new_table_name+ " VALUES ("+generated_insert_query_string+")")
               console.log(r.slice(1));
               r.slice(1).forEach(function(elm){
                 if(heading_length == elm.length) {
                   console.log("inserted")
                   console.log(elm)
-                  db.run("INSERT INTO "+documentFileObj["fileName"][0]+ " VALUES ("+insert_query_string+")", elm)
+                  db.run("INSERT INTO "+new_table_name+ " VALUES ("+generated_insert_query_string+")", elm)
                 }
               })
-              x = db.exec("SELECT * FROM "+documentFileObj["fileName"][0])
+              x = db.exec("SELECT * FROM "+new_table_name)
               console.log(results);
               console.log(x);
               renderHTML(x);
-              document.querySelector("#query").value = "select * from "+documentFileObj["fileName"][0];
+              document.querySelector("#query").value = "select * from "+new_table_name;
             }
           });
         };
 
-        let renderTableHeading = (columns) => {
+        const insert_query_string = (len) => {
+          return Array(len).fill('?').join(', ')
+        }
+
+        const renderTableHeading = (columns) => {
           table_heading_string = `<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"><tr>`
           columns.forEach(function(el) {
             table_heading_string += `<th scope="col" class="px-6 py-3">${el}</th>`
@@ -119,7 +131,7 @@
           return table_heading_string
         }
 
-        let renderTableBody = (rows) => {
+        const renderTableBody = (rows) => {
           table_heading_string = "<tbody>"
           rows.forEach(function(el) {
             table_heading_string += `<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">`
@@ -132,7 +144,7 @@
           return table_heading_string
         }
 
-        let renderHTML = (sqlite3_result) => {
+        const renderHTML = (sqlite3_result) => {
           table_string = `<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">`
           table_string += renderTableHeading(sqlite3_result[0].columns)
           table_string += renderTableBody(sqlite3_result[0].values)
@@ -160,16 +172,17 @@
           r = convertResultToHash(x[0]);
           console.log(r)
           console.log(Papa.unparse(r));
-          downloadBlob(Papa.unparse(r), 'export.csv', 'text/csv;charset=utf-8;')
+          downloadBlob(Papa.unparse(r), mainTableName +'.csv', 'text/csv;charset=utf-8;')
         });
 
-        let convertResultToHash = (results) => {
+        const convertResultToHash = (results) => {
           x = []
+          header_hash = getHeaderHash();
           results.values.forEach(function(elm) {
             h = {}
             i = 0
             elm.forEach(function(el) {
-              h[results.columns[i]] = el;
+              h[header_hash[results.columns[i]]] = el;
               i++;
             })
             x.push(h)
@@ -177,7 +190,19 @@
           return x
         }
 
-        let downloadBlob = (content, filename, contentType) => {
+        const getHeaderHash = () => {
+          y = db.exec("select * from csvsqlweb_headers_special_table limit 1")
+          y = y[0]
+          h = {}
+          i = 0
+          y.columns.forEach(function(column){
+            h[column] = y.values[0][i]
+            i++;
+          })
+          return h;
+        }
+
+        const downloadBlob = (content, filename, contentType) => {
           // Create a blob
           var blob = new Blob([content], { type: contentType });
           var url = URL.createObjectURL(blob);
@@ -187,6 +212,26 @@
           pom.href = url;
           pom.setAttribute('download', filename);
           pom.click();
+        }
+
+        const convertAndStoreCSVHeaders = (headers) => {
+          new_titles = []
+          headers.forEach(function(header){
+            new_titles.push(removeSpecialCharsFromHeaderTitle(header))
+          })
+          console.log("CREATE TABLE csvsqlweb_headers_special_table ("+ new_titles.join(", ")+");")
+          db.run("CREATE TABLE csvsqlweb_headers_special_table ("+ new_titles.join(", ")+");")
+          console.log("INSERT INTO csvsqlweb_headers_special_table VALUES ("+insert_query_string(headers.length)+")")
+          db.run("INSERT INTO csvsqlweb_headers_special_table VALUES ("+insert_query_string(headers.length)+")", headers)
+          return new_titles
+        }
+
+        const removeSpecialCharsFromHeaderTitle = (title) => {
+          let new_title = title.replaceAll(' #', '_')
+          new_title = new_title.replaceAll(' ', '_')
+          new_title = new_title.replaceAll('-', '_')
+          new_title = new_title.toLowerCase();
+          return new_title
         }
       </script>
   </body>
