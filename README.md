@@ -12,7 +12,6 @@ Papa parse, lightweight library that parses and generates CSV files.
 2) sql.js
 SQLite compiled to JavaScript
 
-
 Things to do
 ------------
 
