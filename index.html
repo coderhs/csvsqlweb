@@ -4,16 +4,48 @@
     <title>CSV management in web using SQL</title>
   </head>
   <body>
+    <header class="w-full">
+      <nav class="bg-white border-gray-200 py-2.5 dark:bg-gray-900">
+          <div class="flex flex-wrap items-center justify-between max-w-screen-xl px-4 mx-auto">
+              <a href="#" class="flex items-center">
+                  <!-- <img src="./images/logo.svg" class="h-6 mr-3 sm:h-9" alt="Landwind Logo" /> -->
+                  <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">CSVsqlweb</span>
+              </a>
+              <div class="flex items-center lg:order-2">
+                  <!-- <div class="hidden mt-2 mr-4 sm:inline-block">
+                      <a class="github-button" href="https://github.com/themesberg/landwind" data-size="large" data-icon="octicon-star" data-show-count="true" aria-label="Star themesberg/landwind on GitHub">Star</a>
+                  </div>
+                  <a href="#" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Log in</a> -->
+                  <!-- <a href="https://themesberg.com/product/tailwind-css/landing-page" class="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 sm:mr-2 lg:mr-0 dark:bg-purple-600 dark:hover:bg-purple-700 focus:outline-none dark:focus:ring-purple-800">Download</a>
+                  <button data-collapse-toggle="mobile-menu-2" type="button" class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="mobile-menu-2" aria-expanded="false">
+                      <span class="sr-only">Open main menu</span>
+                      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path></svg>
+                      <svg class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                  </button> -->
+              </div>
+              <div class="items-center justify-between hidden w-full lg:flex lg:w-auto lg:order-1" id="mobile-menu-2">
+                  <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                      <li>
+                          <a href="/" class="block py-2 pl-3 pr-4 text-white bg-purple-700 rounded lg:bg-transparent lg:text-purple-700 lg:p-0 dark:text-white" aria-current="page">Home</a>
+                      </li>
+                      <li>
+                          <a href="/about.html" class="block py-2 pl-3 pr-4 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-purple-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700">About</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </nav>
+    </header>
     <main>
-      <div class="flex flex-col lg:flex-row">
-        <div class="lg:w-1/3 p-4">
+      <div class="flex flex-col lg:flex-row mt-4">
+        <div class="lg:w-1/3 p-2">
           <section class="section-container min-h-1/2">
             <div class="flex flex-col items-center">
               <!-- Documents uploads form and instructions -->
-              <section class="mt-5 px-3 flex gap-6">
+              <section class="px-3 flex gap-6">
                 <div class="flex-1 flex flex-col items-center p-3 border-2 border-dotted border-gray-300 rounded-lg drag-area">
                 <i class="fa-sharp fa-solid fa-cloud-arrow-up text-6xl text-violet-400"></i>
-                  <header class="mt-6">
+                  <header class="mt-1">
                     <span class="drag-file">Drag files here to upload </span> or
                     <button class="px-2 py-1 text-white bg-violet-400 rounded-full file-input-button">
                       select a file
@@ -36,7 +68,7 @@
             </div>
           </section>
         </div>
-        <div class="lg:w-2/3 p-4">
+        <div class="lg:w-2/3 p-2">
           <section class="section-container min-h-1/2">
             <form id="run-query">
               <div class="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
@@ -57,183 +89,186 @@
           </section>
         </div>
       </div>
-
-      <div id="loadingBar" class="hidden"></div>
-
       <div id="display_output" class="relative overflow-x-auto shadow-md sm:rounded-lg">
-
       </div>
-      </main>
-      <script rel="preconnect" src="https://cdn.tailwindcss.com"></script>
+    </main>
 
-      <!-- font awesome -->
-      <script
-        src="https://kit.fontawesome.com/ffbd6d2f88.js"
-        crossorigin="anonymous"
-        defer
-      ></script>
-      <script src="drop_zone.js"></script>
-      <script src="node_modules/papaparse/papaparse.min.js"></script>
-      <script src='node_modules/sql.js/dist/sql-wasm.js'></script>
-      <script>
-        config = {
-          locateFile: filename => `node_modules/sql.js/dist/${filename}`
-        }
-        // The `initSqlJs` function is globally provided by all of the main dist files if loaded in the browser.
-        // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
-        let db;
-        let mainTableName;
 
-        initSqlJs(config).then(function(SQL){
-          db = new SQL.Database();
-        });
+    <script rel="preconnect" src="https://cdn.tailwindcss.com"></script>
 
-        const importCSVtoSqlite3 = () => {
-          Papa.parse(documentFileObj["files"][0], {
-            complete: function(results) {
-              r = results.data;
-              new_column_names = convertAndStoreCSVHeaders(r[0]);
-              mainTableName = removeSpecialCharsFromHeaderTitle(documentFileObj["fileName"][0]);
-              new_table_name   = "csv_" + mainTableName;
-              console.log("CREATE TABLE "+new_table_name+" ("+ new_column_names.join(", ")+");")
-              db.run("CREATE TABLE "+new_table_name+" ("+ new_column_names.join(", ")+");")
-              heading_length = new_column_names.length;
+    <!-- font awesome -->
+    <script
+      src="https://kit.fontawesome.com/ffbd6d2f88.js"
+      crossorigin="anonymous"
+      defer
+    ></script>
+    <script src="drop_zone.js"></script>
+    <script src="node_modules/papaparse/papaparse.min.js"></script>
+    <script src='node_modules/sql.js/dist/sql-wasm.js'></script>
+    <script>
+      config = {
+        locateFile: filename => `node_modules/sql.js/dist/${filename}`
+      }
+      // The `initSqlJs` function is globally provided by all of the main dist files if loaded in the browser.
+      // We must specify this locateFile function if we are loading a wasm file from anywhere other than the current html page's folder.
+      let db;
+      let mainTableName;
 
-              generated_insert_query_string = insert_query_string(heading_length)
-              console.log("INSERT INTO "+new_table_name+ " VALUES ("+generated_insert_query_string+")")
-              console.log(r.slice(1));
-              r.slice(1).forEach(function(elm){
-                if(heading_length == elm.length) {
-                  console.log("inserted")
-                  console.log(elm)
-                  db.run("INSERT INTO "+new_table_name+ " VALUES ("+generated_insert_query_string+")", elm)
-                }
-              })
-              x = db.exec("SELECT * FROM "+new_table_name)
-              console.log(results);
-              console.log(x);
-              renderHTML(x);
-              document.querySelector("#query").value = "select * from "+new_table_name;
-            }
-          });
-        };
+      initSqlJs(config).then(function(SQL){
+        db = new SQL.Database();
+      });
 
-        const insert_query_string = (len) => {
-          return Array(len).fill('?').join(', ')
-        }
+      const importCSVtoSqlite3 = () => {
+        Papa.parse(documentFileObj["files"][0], {
+          complete: function(results) {
+            r = results.data;
+            new_column_names = convertAndStoreCSVHeaders(r[0]);
+            mainTableName = removeSpecialCharsFromHeaderTitle(documentFileObj["fileName"][0]);
+            new_table_name   = "csv_" + mainTableName;
+            console.log("CREATE TABLE "+new_table_name+" ("+ new_column_names.join(", ")+");")
+            db.run("CREATE TABLE "+new_table_name+" ("+ new_column_names.join(", ")+");")
+            heading_length = new_column_names.length;
 
-        const renderTableHeading = (columns) => {
-          table_heading_string = `<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"><tr>`
-          columns.forEach(function(el) {
-            table_heading_string += `<th scope="col" class="px-6 py-3">${el}</th>`
-          })
-          table_heading_string += "</tr></thead>"
-          return table_heading_string
-        }
-
-        const renderTableBody = (rows) => {
-          table_heading_string = "<tbody>"
-          rows.forEach(function(el) {
-            table_heading_string += `<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">`
-            el.forEach(function(column) {
-              table_heading_string += `<td class="px-6 py-4">${column}</td>`
+            generated_insert_query_string = insert_query_string(heading_length)
+            console.log("INSERT INTO "+new_table_name+ " VALUES ("+generated_insert_query_string+")")
+            console.log(r.slice(1));
+            r.slice(1).forEach(function(elm){
+              if(heading_length == elm.length) {
+                console.log("inserted")
+                console.log(elm)
+                db.run("INSERT INTO "+new_table_name+ " VALUES ("+generated_insert_query_string+")", elm)
+              }
             })
-            table_heading_string += "</tr>"
-          })
-          table_heading_string += "</tbody>"
-          return table_heading_string
-        }
-
-        const renderHTML = (sqlite3_result) => {
-          table_string = `<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">`
-          table_string += renderTableHeading(sqlite3_result[0].columns)
-          table_string += renderTableBody(sqlite3_result[0].values)
-          table_string += "</table>"
-          let display_output = document.getElementById('display_output');
-          display_output.innerHTML = table_string;
-          console.log(table_string);
-        }
-
-        document.querySelector("body").addEventListener("submit", (e) => {
-          e.preventDefault();
-          console.log("it worked");
-          console.log(document.querySelector("#query").value)
-          x = db.exec(document.querySelector("#query").value)
-          console.log(x);
-          renderHTML(x);
+            x = db.exec("SELECT * FROM "+new_table_name)
+            console.log(results);
+            console.log(x);
+            renderHTML(x);
+            document.querySelector("#query").value = "select * from "+new_table_name;
+          }
         });
+      };
 
-        document.querySelector("#download-csv").addEventListener("click", (e) => {
-          e.preventDefault();
-          console.log("it worked");
-          console.log(document.querySelector("#query").value)
-          x = db.exec(document.querySelector("#query").value)
-          console.log(x);
-          r = convertResultToHash(x[0]);
-          console.log(r)
-          console.log(Papa.unparse(r));
-          downloadBlob(Papa.unparse(r), mainTableName +'.csv', 'text/csv;charset=utf-8;')
-        });
+      const insert_query_string = (len) => {
+        return Array(len).fill('?').join(', ')
+      }
 
-        const convertResultToHash = (results) => {
-          x = []
-          header_hash = getHeaderHash();
-          results.values.forEach(function(elm) {
-            h = {}
-            i = 0
-            elm.forEach(function(el) {
-              h[header_hash[results.columns[i]]] = el;
-              i++;
-            })
-            x.push(h)
+      const renderTableHeading = (columns) => {
+        table_heading_string = `<thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"><tr>`
+        columns.forEach(function(el) {
+          table_heading_string += `<th scope="col" class="px-6 py-3">${el}</th>`
+        })
+        table_heading_string += "</tr></thead>"
+        return table_heading_string
+      }
+
+      const renderTableBody = (rows) => {
+        table_heading_string = "<tbody>"
+        rows.forEach(function(el) {
+          table_heading_string += `<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">`
+          el.forEach(function(column) {
+            table_heading_string += `<td class="px-6 py-4">${column}</td>`
           })
-          return x
-        }
+          table_heading_string += "</tr>"
+        })
+        table_heading_string += "</tbody>"
+        return table_heading_string
+      }
 
-        const getHeaderHash = () => {
-          y = db.exec("select * from csvsqlweb_headers_special_table limit 1")
-          y = y[0]
+      const renderHTML = (sqlite3_result) => {
+        console.log("==========")
+        console.log(sqlite3_result)
+        table_string = `<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">`
+        table_string += renderTableHeading(sqlite3_result[0].columns)
+        table_string += renderTableBody(sqlite3_result[0].values)
+        table_string += "</table>"
+        let display_output = document.getElementById('display_output');
+        display_output.innerHTML = table_string;
+        console.log(table_string);
+      }
+
+      document.querySelector("body").addEventListener("submit", (e) => {
+        e.preventDefault();
+        console.log("it worked");
+        console.log(document.querySelector("#query").value)
+        x = db.exec(document.querySelector("#query").value)
+        console.log(x);
+        renderHTML(x);
+      });
+
+      document.querySelector("#download-csv").addEventListener("click", (e) => {
+        e.preventDefault();
+        console.log("it worked");
+        console.log(document.querySelector("#query").value)
+        x = db.exec(document.querySelector("#query").value)
+        console.log(x);
+        r = convertResultToHash(x[0]);
+        console.log(r)
+        console.log(Papa.unparse(r));
+        downloadBlob(Papa.unparse(r), mainTableName +'.csv', 'text/csv;charset=utf-8;')
+      });
+
+      const convertResultToHash = (results) => {
+        x = []
+        header_hash = getHeaderHash();
+        results.values.forEach(function(elm) {
           h = {}
           i = 0
-          y.columns.forEach(function(column){
-            h[column] = y.values[0][i]
+          elm.forEach(function(el) {
+            h[header_hash[results.columns[i]]] = el;
             i++;
           })
-          return h;
-        }
+          x.push(h)
+        })
+        return x
+      }
 
-        const downloadBlob = (content, filename, contentType) => {
-          // Create a blob
-          var blob = new Blob([content], { type: contentType });
-          var url = URL.createObjectURL(blob);
+      const getHeaderHash = () => {
+        y = db.exec("select * from csvsqlweb_headers_special_table limit 1")
+        y = y[0]
+        h = {}
+        i = 0
+        y.columns.forEach(function(column){
+          h[column] = y.values[0][i]
+          i++;
+        })
+        return h;
+      }
 
-          // Create a link to download it
-          var pom = document.createElement('a');
-          pom.href = url;
-          pom.setAttribute('download', filename);
-          pom.click();
-        }
+      const downloadBlob = (content, filename, contentType) => {
+        // Create a blob
+        var blob = new Blob([content], { type: contentType });
+        var url = URL.createObjectURL(blob);
 
-        const convertAndStoreCSVHeaders = (headers) => {
-          new_titles = []
-          headers.forEach(function(header){
-            new_titles.push(removeSpecialCharsFromHeaderTitle(header))
-          })
-          console.log("CREATE TABLE csvsqlweb_headers_special_table ("+ new_titles.join(", ")+");")
-          db.run("CREATE TABLE csvsqlweb_headers_special_table ("+ new_titles.join(", ")+");")
-          console.log("INSERT INTO csvsqlweb_headers_special_table VALUES ("+insert_query_string(headers.length)+")")
-          db.run("INSERT INTO csvsqlweb_headers_special_table VALUES ("+insert_query_string(headers.length)+")", headers)
-          return new_titles
-        }
+        // Create a link to download it
+        var pom = document.createElement('a');
+        pom.href = url;
+        pom.setAttribute('download', filename);
+        pom.click();
+      }
 
-        const removeSpecialCharsFromHeaderTitle = (title) => {
-          let new_title = title.replaceAll(' #', '_')
-          new_title = new_title.replaceAll(' ', '_')
-          new_title = new_title.replaceAll('-', '_')
-          new_title = new_title.toLowerCase();
-          return new_title
-        }
-      </script>
+      const convertAndStoreCSVHeaders = (headers) => {
+        new_titles = []
+        headers.forEach(function(header){
+          new_titles.push(removeSpecialCharsFromHeaderTitle(header))
+        })
+        console.log("CREATE TABLE csvsqlweb_headers_special_table ("+ new_titles.join(", ")+");")
+        db.run("DROP TABLE IF EXISTS csvsqlweb_headers_special_table")
+        db.run("CREATE TABLE csvsqlweb_headers_special_table ("+ new_titles.join(", ")+");")
+        console.log("INSERT INTO csvsqlweb_headers_special_table VALUES ("+insert_query_string(headers.length)+")")
+        db.run("INSERT INTO csvsqlweb_headers_special_table VALUES ("+insert_query_string(headers.length)+")", headers)
+        return new_titles
+      }
+
+      const removeSpecialCharsFromHeaderTitle = (title) => {
+        let new_title = title.replaceAll(' #', '_')
+        new_title = new_title.replaceAll(' ', '_')
+        new_title = new_title.replaceAll('-', '_')
+        new_title = new_title.replaceAll('(', '')
+        new_title = new_title.replaceAll(')', '')
+        new_title = new_title.toLowerCase();
+        return new_title
+      }
+    </script>
   </body>
 </html>
 
