@@ -18,3 +18,11 @@ Things to do
 2) Move both Papa parse/SQL to service worker, to reduce load on the browser main thread.
 3) Validate SQL query as valid before executing
 4) Detect data type and use that when we create the table
+
+Run Locally
+-----------
+
+```sh
+npm install
+http-server .
+```
